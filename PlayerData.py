@@ -1,3 +1,4 @@
+from email import message
 import json
 
 # show_players receives a list of players into variable named "players"  It then goes through the players and displays them.
@@ -19,14 +20,24 @@ def save_players():
     f = open("players.dat", "wb")
     secret_key = load_key()
     e = Fernet(secret_key)
-    for player in PlayerList:
-        json_player = json.dumps(player) + '\n'
-        # TODO:  Encrypt the json_player string and then store the encrypted string in the file.
-        message = json_player.encode()
-        json_player = e.encrypt(message)
-        f.write(json_player)
+    json_players = json.dumps(PlayerList)
+    # TODO:  Encrypt the json_player string and then store the encrypted string in the file.
+    message = json_players.encode()
+    json_players = e.encrypt(message)
+    f.write(json_players)
     f.close()
 
+def load_key():
+    return open("secret.key", "rb").read()
+
+def decrypt_message(message):
+    key = load_key()
+    f = Fernet(key)
+    message = f.decrypt(message)
+    decoded_message = message.decode()
+
+    print(decoded_message)
+    return decoded_message
 
 def show_players():
     for player in PlayerList:
@@ -39,19 +50,12 @@ def show_players():
 
 def read_and_load_players():
     #print("The player list is: {}".format(PlayerList))
-
     still_reading = True
-    f = open("players.dat", "r")
-
-    while still_reading:
-        player = f.readline()
-        if not player:
-            still_reading = False
-            break
-        
-        player = json.loads(player)
-        PlayerList.append(player)
-    
+    f = open("players.dat", "rb")
+    players = f.read()
+    decrypted_players = decrypt_message(players)
+    print("players is {}".format(decrypted_players))
+    PlayerList = json.loads(decrypted_players)
     f.close()
 
     # expected output ""Contents of PlayerData: { "first": <first name>, "last": <last name>, "score": <entered score>}"
