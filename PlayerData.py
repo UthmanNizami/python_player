@@ -4,11 +4,27 @@ import json
 #
 # 1.  open a file called "players.dat".  If the file already exists, append to the file.  If it doesn't, it should create a new file.  
 #     You should write the players first name, last name, and recent score to the file.
+#
+# TODO:  Encrypt player data before saving it to a file
+from cryptography.fernet import Fernet
+
+def load_key():
+    """
+    Loads the key named `secret.key` from the current directory.
+    """
+    return open("secret.key", "rb").read()
+
 
 def save_players():
-    f = open("players.dat", "w")
+    f = open("players.dat", "wb")
+    secret_key = load_key()
+    e = Fernet(secret_key)
     for player in PlayerList:
-        f.write(json.dumps(player) + '\n')
+        json_player = json.dumps(player) + '\n'
+        # TODO:  Encrypt the json_player string and then store the encrypted string in the file.
+        message = json_player.encode()
+        json_player = e.encrypt(message)
+        f.write(json_player)
     f.close()
 
 
