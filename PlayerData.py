@@ -99,13 +99,3 @@ show_players()
 
 
 #read_and_load_players()
-
-
-
-    # PlayerInfo1 = {
-    #     "FirstName": "Khurram",
-    #     "LastName": "Nizami",
-    #     "CurrentScore": 3000,
-    #     "BackPack": [{ "strength": 30, "durability": 5, "name": "Master Sword"}],
-    #     "equipped": BackPack[0]        
-    # }
